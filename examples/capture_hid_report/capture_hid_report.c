@@ -1,6 +1,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include "pico/binary_info.h"
 
 #include "pico/stdlib.h"
 #include "pico/multicore.h"
@@ -9,6 +10,7 @@
 #include "pio_usb.h"
 
 static usb_device_t *usb_device = NULL;
+const uint LED_PIN = 25;
 
 void core1_main() {
   sleep_ms(10);
@@ -30,6 +32,12 @@ void core1_main() {
 int main() {
   // default 125MHz is not appropreate. Sysclock should be multiple of 12MHz.
   set_sys_clock_khz(120000, true);
+
+  bi_decl(bi_program_description("pico-usb"));
+  bi_decl(bi_1pin_with_name(LED_PIN, "On-board LED"));
+  gpio_init(LED_PIN);
+  gpio_set_dir(LED_PIN, GPIO_OUT);
+  gpio_put(LED_PIN, 1);
 
   stdio_init_all();
   printf("hello!");
@@ -60,17 +68,21 @@ int main() {
           int len = pio_usb_get_in_data(ep, temp, sizeof(temp));
 
           if (len > 0) {
+            gpio_put(LED_PIN, 0);
             printf("%04x:%04x EP 0x%02x:\t", device->vid, device->pid,
                    ep->ep_num);
             for (int i = 0; i < len; i++) {
               printf("%02x ", temp[i]);
             }
             printf("\n");
+            stdio_flush();
+            sleep_us(50000);
           }
         }
       }
     }
     stdio_flush();
     sleep_us(10);
+    gpio_put(LED_PIN, 1);
   }
 }

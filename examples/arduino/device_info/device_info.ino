@@ -11,7 +11,7 @@
 
 // pio-usb is required for rp2040 host
 #include "pio_usb.h"
-#define HOST_PIN_DP   2   // Pin used as D+ for host, D- = D+ + 1
+#define HOST_PIN_DP   0   // Pin used as D+ for host, D- = D+ + 1
 
 #include "Adafruit_TinyUSB.h"
 
@@ -26,6 +26,7 @@ tusb_desc_device_t desc_device;
 // the setup function runs once when you press reset or power the board
 void setup()
 {
+  pinMode(LED_BUILTIN, OUTPUT);
   Serial1.begin(115200);
 
   Serial.begin(115200);
@@ -36,6 +37,10 @@ void setup()
 
 void loop()
 {
+  digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
+  delay(100);                       // wait for a second
+  digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
+  delay(100);   
 }
 
 // core1's setup
@@ -189,4 +194,3 @@ static void print_utf16(uint16_t *temp_buf, size_t buf_len) {
 
   Serial.printf((char*)temp_buf);
 }
-
