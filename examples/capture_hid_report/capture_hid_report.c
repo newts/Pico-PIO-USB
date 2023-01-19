@@ -7,6 +7,10 @@
 #include "pico/multicore.h"
 #include "pico/bootrom.h"
 
+#include "pico-ssd1306/ssd1306.h"
+// You also need i2c library to communicate with the display
+#include "hardware/i2c.h"
+
 #include "pio_usb.h"
 
 static usb_device_t *usb_device = NULL;
